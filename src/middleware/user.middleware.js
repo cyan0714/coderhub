@@ -1,5 +1,6 @@
 import { errorTypes } from "../constants/error-types.js";
 import { userService } from "../service/user.service.js";
+import { md5password } from "../utils/password-handle.js";
 
 const verifyUser = async (ctx, next) => {
   const { username, password } = ctx.request.body;
@@ -19,4 +20,12 @@ const verifyUser = async (ctx, next) => {
   await next()
 }
 
-export {verifyUser}
+const handlePassword = async (ctx, next) => {
+  const { password } = ctx.request.body
+  // password 必须为 string 类型
+  ctx.request.body.password = md5password(password)
+
+  await next()
+}
+
+export {verifyUser, handlePassword}
