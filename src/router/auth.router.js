@@ -1,9 +1,10 @@
 import Router from 'koa-router'
 import { authController } from '../controller/auth.controller.js'
-import { verifyLogin, } from '../middleware/auth.middleware.js'
-const authRouter = new Router({prefix: '/login'})
+import { verifyLogin, verifyAuth } from '../middleware/auth.middleware.js'
+const authRouter = new Router()
 
-authRouter.post('/', verifyLogin, authController.login)
+authRouter.post('/login', verifyLogin, authController.login)
+authRouter.get('/test', verifyAuth, authController.success)
 
 
 export {authRouter}

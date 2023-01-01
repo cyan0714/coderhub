@@ -1,12 +1,24 @@
-
+import jwt from 'jsonwebtoken'
+import { PRIVATE_KEY } from '../app/config.js';
 class AuthController {
   async login(ctx, next) {
-    const {username} = ctx.request.body;
+    console.log('controller的ctx: ', ctx);
+    console.log(ctx.user);
+    const { id, name } = ctx.user;
+    const token = jwt.sign({ id, name }, PRIVATE_KEY, {
+      expiresIn: 60 * 60 * 24,
+      algorithm: 'RS256'
+    })
 
-    // 查询数据
-    // const result = await userService.create(user)
+    ctx.body = {
+      id,
+      name,
+      token,
+    }
+  }
 
-    ctx.body = `登录成功, 欢迎${username}回来`
+  async success(ctx, next) {
+    ctx.body = "授权成功~"
   }
 }
 

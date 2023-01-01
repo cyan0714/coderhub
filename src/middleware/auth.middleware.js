@@ -1,8 +1,11 @@
+import jwt from 'jsonwebtoken'
 import { userService } from "../service/user.service.js";
 import { errorTypes } from "../constants/error-types.js";
 import { md5password } from "../utils/password-handle.js";
+import { PUBLIC_KEY } from '../app/config.js';
 
 const verifyLogin = async (ctx, next) => {
+  console.log('ctx: ', ctx.headers.authorization);
   // 1. 获取用户名和密码
   const { username, password } = ctx.request.body; 
 
@@ -26,7 +29,27 @@ const verifyLogin = async (ctx, next) => {
     return ctx.app.emit('error', error, ctx)
   }
 
+  ctx.user = user
   await next()
 }
 
-export {verifyLogin}
+const verifyAuth = async (ctx, next) => {
+  console.log('验证授权的middleware~');
+
+  const authorization = ctx.headers.authorization
+  const token = authorization.replace('Bearer ', '')
+
+  // 验证 token(id/name/iot/exp)
+  try {
+    const result = jwt.verify(token, PUBLIC_KEY, {
+      algorithms: ["RS256"]
+    })
+    ctx.user = result
+    await next()
+  } catch (err) {
+    const error = new Error(errorTypes.UNAUTHORIZATION)
+    ctx.app.emit('error', error, ctx)
+  }
+}
+
+export {verifyLogin, verifyAuth}
