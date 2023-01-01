@@ -37,6 +37,10 @@ const verifyAuth = async (ctx, next) => {
   console.log('验证授权的middleware~');
 
   const authorization = ctx.headers.authorization
+  if (!authorization) {
+    const error = new Error(errorTypes.UNAUTHORIZATION)
+    return ctx.app.emit('error', error, ctx)
+  }
   const token = authorization.replace('Bearer ', '')
 
   // 验证 token(id/name/iot/exp)
