@@ -12,12 +12,20 @@ export const errorHandler = (error, ctx) => {
       status = 409 // conflict
       message = '用户名已存在~'
       break
+    case errorTypes.USERNAME_DOES_NOT_EXIST:
+      status = 400 // 参数错误
+      message = '用户名不存在~'
+      break
+    case errorTypes.PASSWORD_ERROR:
+      status = 400 // 参数错误
+      message = '密码错误~'
+      break
     default:
       status = 404
       message = 'NOT FOUND'
       break
   }
-  
+
   ctx.status = status
   ctx.body = message
 }
