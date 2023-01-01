@@ -15,6 +15,13 @@ class MomentController {
     const result = await momentService.getMomentById(momentId)
     ctx.body = result
   }
+
+  async list(ctx, next) {
+    const {offset, size} = ctx.query
+
+    const result = await momentService.getMomentList(offset, size)
+    ctx.body = result
+  }
 }
 
 export const momentController = new MomentController
