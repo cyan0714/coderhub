@@ -1,4 +1,5 @@
 import { momentService } from "../service/moment.service.js"
+import { authService } from "../service/auth.service.js"
 
 class MomentController {
   async create(ctx, next) {
@@ -22,6 +23,23 @@ class MomentController {
     const result = await momentService.getMomentList(offset, size)
     ctx.body = result
   }
+
+  async update(ctx, next) {
+    const { momentId } = ctx.params;
+    const { content } = ctx.request.body
+    
+    const result = await momentService.update(content, momentId)
+    ctx.body = result
+  }
+
+  async remove(ctx, next) {
+    const { momentId } = ctx.params
+    
+    const result = await momentService.remove(momentId)
+    ctx.body = result
+  }
+
+
 }
 
 export const momentController = new MomentController

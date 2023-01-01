@@ -35,6 +35,20 @@ class MomentService {
 
     return result
   }
+
+  async update(content, momentId) {
+    const statement = `update moment set content = ? where id = ?;`
+    const [result] = await connection.execute(statement, [content, momentId])
+
+    return result
+  }
+
+  async remove(momentId) {
+    const statement = `delete from moment where id = ?;`
+    const [result] = await connection.execute(statement, [momentId])
+
+    return result
+  }
 }
 
 export const momentService = new MomentService()

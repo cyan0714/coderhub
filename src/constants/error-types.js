@@ -4,4 +4,5 @@ export const errorTypes = {
   USERNAME_DOES_NOT_EXIST: 'username_does_not_exist',
   PASSWORD_ERROR: 'password_error',
   UNAUTHORIZATION: 'unauthorization',
+  UNPERMISSION: 'unpermission',
 }; 

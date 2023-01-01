@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { userService } from "../service/user.service.js";
+import { authService } from '../service/auth.service.js';
 import { errorTypes } from "../constants/error-types.js";
 import { md5password } from "../utils/password-handle.js";
 import { PUBLIC_KEY } from '../app/config.js';
@@ -56,4 +57,21 @@ const verifyAuth = async (ctx, next) => {
   }
 }
 
-export {verifyLogin, verifyAuth}
+const verifyPermission = async (ctx, next) => {
+  const { momentId } = ctx.params;
+  const { id } = ctx.user;
+
+  try {
+    const isPermission = await authService.checkMoment(momentId, id)
+    if (!isPermission) {
+      throw new Error()
+    } else {
+      await next()
+    } 
+  } catch (err) {
+    const error = new Error(errorTypes.UNPERMISSION);
+    return ctx.app.emit('error', error, ctx)
+  }
+}
+
+export {verifyLogin, verifyAuth, verifyPermission}
