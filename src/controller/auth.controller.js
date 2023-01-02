@@ -2,8 +2,6 @@ import jwt from 'jsonwebtoken'
 import { PRIVATE_KEY } from '../app/config.js';
 class AuthController {
   async login(ctx, next) {
-    console.log('controller的ctx: ', ctx);
-    console.log(ctx.user);
     const { id, name } = ctx.user;
     const token = jwt.sign({ id, name }, PRIVATE_KEY, {
       expiresIn: 60 * 60 * 24,

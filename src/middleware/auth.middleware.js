@@ -6,7 +6,6 @@ import { md5password } from "../utils/password-handle.js";
 import { PUBLIC_KEY } from '../app/config.js';
 
 const verifyLogin = async (ctx, next) => {
-  console.log('ctx: ', ctx.headers.authorization);
   // 1. 获取用户名和密码
   const { username, password } = ctx.request.body; 
 
@@ -35,8 +34,6 @@ const verifyLogin = async (ctx, next) => {
 }
 
 const verifyAuth = async (ctx, next) => {
-  console.log('验证授权的middleware~');
-
   const authorization = ctx.headers.authorization
   if (!authorization) {
     const error = new Error(errorTypes.UNAUTHORIZATION)
@@ -58,19 +55,20 @@ const verifyAuth = async (ctx, next) => {
 }
 
 const verifyPermission = async (ctx, next) => {
-  const { momentId } = ctx.params;
+  // 1.获取参数 { commentId: '1' }
+  const [resourceKey] = Object.keys(ctx.params);
+  const tableName = resourceKey.replace('Id', '');
+  const resourceId = ctx.params[resourceKey];
   const { id } = ctx.user;
 
+  // 2.查询是否具备权限
   try {
-    const isPermission = await authService.checkMoment(momentId, id)
-    if (!isPermission) {
-      throw new Error()
-    } else {
-      await next()
-    } 
+    const isPermission = await authService.checkResource(tableName, resourceId, id);
+    if (!isPermission) throw new Error();
+    await next();
   } catch (err) {
     const error = new Error(errorTypes.UNPERMISSION);
-    return ctx.app.emit('error', error, ctx)
+    return ctx.app.emit('error', error, ctx);
   }
 }
 

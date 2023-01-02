@@ -1,14 +1,10 @@
 import { connection } from "../app/database.js"
 
 class AuthService {
-  async checkMoment(momentId, userId) {
-    try {
-      const statement = `select * from moment where id = ? and user_id = ?;`
-      const [result] = await connection.execute(statement, [momentId, userId])
-      return result.length !== 0
-    } catch (error) {
-      console.log(error);
-    }
+  async checkResource(tableName, id, userId) {
+    const statement = `SELECT * FROM ${tableName} WHERE id = ? AND user_id = ?;`;
+    const [result] = await connection.execute(statement, [id, userId]);
+    return result.length === 0 ? false: true;
   }
 }
 
